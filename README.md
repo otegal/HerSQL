@@ -1,2 +1,2 @@
 # HerSQL
- 自作RDBMSがんばるぞ
+自作RDBMSがんばるぞ
