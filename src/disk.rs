@@ -12,8 +12,15 @@ pub const PAGE_SIZE: usize = 4096;
 pub struct PageId(pub u64);
 
 impl PageId {
+    pub const INVALID_PAGE_ID: PageId = PageId(u64::MAX);
     pub fn to_u64(self) -> u64 {
         self.0
+    }
+}
+
+impl Default for PageId {
+    fn default() -> Self {
+        Self::INVALID_PAGE_ID
     }
 }
 
