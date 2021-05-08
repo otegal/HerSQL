@@ -4,5 +4,5 @@ pub mod btree;
 mod bsearch;
 mod slotted;
 pub mod table;
-mod tuple;
+pub mod tuple;
 mod memcmpable;
