@@ -4,6 +4,7 @@ use std::path::Path;
 use std::io::{Seek, SeekFrom, Write, Read};
 
 use zerocopy::{AsBytes, FromBytes};
+use std::convert::TryInto;
 
 pub const PAGE_SIZE: usize = 4096;
 
@@ -16,11 +17,32 @@ impl PageId {
     pub fn to_u64(self) -> u64 {
         self.0
     }
+
+    pub fn valid(self) -> Option<PageId> {
+        if self == Self::INVALID_PAGE_ID {
+            None
+        } else {
+            Some(self)
+        }
+    }
 }
 
 impl Default for PageId {
     fn default() -> Self {
         Self::INVALID_PAGE_ID
+    }
+}
+
+impl From<Option<PageId>> for PageId {
+    fn from(page_id: Option<PageId>) -> Self {
+        page_id.unwrap_or_default()
+    }
+}
+
+impl From<&[u8]> for PageId {
+    fn from(bytes: &[u8]) -> Self {
+        let arr = bytes.try_into().unwrap();
+        PageId(u64::from_ne_bytes(arr))
     }
 }
 
@@ -69,6 +91,11 @@ impl DiskManager {
         let offset = PAGE_SIZE as u64 * page_id.to_u64();
         self.heap_file.seek(SeekFrom::Start(offset))?;
         self.heap_file.read_exact(data)
+    }
+
+    pub fn sync(&mut self) -> io::Result<()> {
+        self.heap_file.flush()?;
+        self.heap_file.sync_all()
     }
 }
 
