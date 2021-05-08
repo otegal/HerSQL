@@ -6,3 +6,4 @@ mod slotted;
 pub mod table;
 pub mod tuple;
 mod memcmpable;
+pub mod query;
